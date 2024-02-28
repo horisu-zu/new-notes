@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/type_net"
+            android:icon="@drawable/ic_check"
+            android:title="Сітка" />
+        <item
+            android:id="@+id/type_list"
+            android:icon="@drawable/ic_check"
+            android:title="Список"/>
+    </group>
+</menu>

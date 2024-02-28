@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+    android:background="#3C3C3C"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/folderTitle"
+        android:text="folderTitle..."
+        android:maxLines="1"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintRight_toLeftOf="@id/vert_end_line"
+        app:layout_constraintLeft_toRightOf="@id/vert_start_line"
+        app:layout_constraintBottom_toTopOf="@id/hor_start_line"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <!--<SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_margin="10dp"
+        android:queryHint="Пошук замітки..."
+        app:layout_constraintRight_toLeftOf="@id/vert_end_line"
+        app:layout_constraintLeft_toRightOf="@id/vert_start_line"
+        app:layout_constraintTop_toBottomOf="@id/hor_start_line"/>-->
+
+    <!--<androidx.cardview.widget.CardView
+        android:id="@+id/listMenuCardView"
+        app:cardCornerRadius="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="#3C3C3C"
+        app:layout_constraintLeft_toRightOf="@id/vert_start_line"
+        app:layout_constraintTop_toBottomOf="@id/hor_start_line"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" >
+
+        <ImageButton
+            android:id="@+id/listMenuButton"
+            android:src="@drawable/ic_list_menu"
+            android:layout_marginHorizontal="10dp"
+            android:background="#3C3C3C"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </androidx.cardview.widget.CardView>-->
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/typeVisView"
+        app:cardCornerRadius="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="#3C3C3C"
+        app:layout_constraintLeft_toRightOf="@id/vert_start_line"
+        app:layout_constraintTop_toBottomOf="@id/hor_start_line"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" >
+
+        <ImageButton
+            android:id="@+id/typeView"
+            android:src="@drawable/ic_type"
+            android:layout_marginHorizontal="10dp"
+            android:background="#3C3C3C"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sortCardView"
+        app:cardCornerRadius="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="#3C3C3C"
+        app:layout_constraintRight_toLeftOf="@id/vert_end_line"
+        app:layout_constraintTop_toBottomOf="@id/hor_start_line"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" >
+
+        <LinearLayout
+            android:id="@+id/sortLayout"
+            android:orientation="horizontal"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/sortButton"
+                android:src="@drawable/ic_list"
+                android:layout_marginStart="5dp"
+                android:background="#3C3C3C"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/sortTypeView"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="Дата створення"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/delimiter"
+                android:text="|"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                />
+
+            <ImageButton
+                android:id="@+id/sortTypeButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:background="#3C3C3C"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_arrow_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/vert_start_line"
+        app:layout_constraintRight_toLeftOf="@id/vert_end_line"
+        app:layout_constraintTop_toBottomOf="@id/sortCardView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vert_start_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="40dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vert_end_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="40dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hor_start_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="40dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hor_end_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="40dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
