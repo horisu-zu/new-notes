@@ -23,12 +23,14 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder>{
 
     Context context;
     List<Notes> notesList;
+    List<Notes> originalNotesList;
     NotesClickListener onClickListener;
 
     public NotesListAdapter(Context context, List<Notes> notesList,
                             NotesClickListener onClickListener) {
         this.context = context;
         this.notesList = notesList;
+        this.originalNotesList = new ArrayList<>(notesList);
         this.onClickListener = onClickListener;
     }
 

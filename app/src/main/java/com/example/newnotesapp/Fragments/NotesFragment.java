@@ -40,7 +40,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     RecyclerView recyclerView;
     NotesListAdapter notesListAdapter;
     List<Notes> notesList = new ArrayList<>();
-    List<Notes> origignalNotesList = new ArrayList<>(notesList);
+    List<Notes> origignalNotesList;
     List<Folder> folders;
     RoomDB database;
     FloatingActionButton fab_add;
@@ -48,6 +48,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     SearchView searchView_home;
     Notes selectedNote;
     ImageButton sortButton;
+    ImageButton pinViewButton;
     TextView sortTextView;
     ImageButton arrowSortButton;
     ImageButton typeButton;
@@ -55,6 +56,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     private boolean isMenuVisible = false;
     private boolean isFunctionalityEnabled = true;
     private boolean isNetType = true;
+    private boolean isPinnedButtonActive = false;
     private int item_id = 0;
 
     @Nullable
@@ -70,7 +72,14 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         sortButton = view.findViewById(R.id.sortButton);
         sortTextView = view.findViewById(R.id.sortTypeView);
         arrowSortButton = view.findViewById(R.id.sortTypeButton);
+        pinViewButton = view.findViewById(R.id.pinnedItemsView);
         typeButton = view.findViewById(R.id.typeView);
+
+        sortButton.setBackgroundColor(0);
+        arrowSortButton.setBackgroundColor(0);
+        typeButton.setBackgroundColor(0);
+        pinViewButton.setBackgroundColor(0);
+
 
         database = RoomDB.getInstance(getContext());
         notesList = database.mainDAO().getAll();
@@ -86,6 +95,32 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
             database.mainDAO().insertFolder(baseFolder);
         }
+
+        pinViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isPinnedButtonActive) {
+                    List<Notes> pinnedNotes, notPinnedNotes;
+
+                    pinnedNotes = database.mainDAO().getAllNotesByPinStatus(true);
+                    notPinnedNotes = database.mainDAO().getAllNotesByPinStatus(false);
+
+                    pinViewButton.setBackgroundColor(getResources().getColor(R.color.color3));
+                    setUIEnabled(false);
+
+                    pinnedNotes.addAll(notPinnedNotes);
+                    notesListAdapter.filterList(pinnedNotes);
+                }
+                else if(isPinnedButtonActive) {
+                    pinViewButton.setBackgroundColor(0);
+
+                    setUIEnabled(true);
+                    notesListAdapter.filterList(database.mainDAO().getAll());
+                }
+
+                isPinnedButtonActive = !isPinnedButtonActive;
+            }
+        });
 
         typeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +148,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         database.mainDAO().getAllSortedByDate() :
                         database.mainDAO().getAllSortedByName();
 
-                notesList.clear();
-                notesList.addAll(sortedNotes);
+                notesListAdapter.filterList(sortedNotes);
                 notesListAdapter.notifyDataSetChanged();
             }
         });
@@ -143,7 +177,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             @Override
             public boolean onQueryTextChange(String newText) {
                 filter(newText);
-                return true;
+                return false;
             }
         });
 
@@ -153,8 +187,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     private void filter(String newText) {
         List<Notes> filteredList = new ArrayList<>();
 
-        for(Notes singleNote : notesList) {
-            if(singleNote.getTitle().toLowerCase().contains(newText.toLowerCase())
+        for (Notes singleNote : notesList) {
+            if (singleNote.getTitle().toLowerCase().contains(newText.toLowerCase())
                     || singleNote.getNotes().toLowerCase().contains(newText.toLowerCase())) {
                 filteredList.add(singleNote);
             }
@@ -292,8 +326,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                             : database.mainDAO().getAllSortedByNameReverse();
                 }
 
-                notesList.clear();
-                notesList.addAll(sortedNotes);
+                notesListAdapter.filterList(sortedNotes);
                 notesListAdapter.notifyDataSetChanged();
 
                 String textView = (itemId == R.id.menu_sort_by_date)
@@ -318,10 +351,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     }
 
     private void setUIEnabled(boolean enabled) {
-        fab_add.setEnabled(enabled);
         sortButton.setEnabled(enabled);
         arrowSortButton.setEnabled(enabled);
-        searchView_home.setEnabled(enabled);
     }
 
     private void showTypePopupMenu(View view) {

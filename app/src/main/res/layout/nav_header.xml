@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:gravity="center_vertical"
-    android:background="@color/color3"
+    android:background="@color/gray_color_item"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <androidx.cardview.widget.CardView
@@ -17,7 +17,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/titleView"
-            android:background="#6C6C6C"
             android:text="New Notes App"
             android:gravity="center"
             android:layout_width="match_parent"

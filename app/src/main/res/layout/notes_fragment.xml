@@ -64,6 +64,28 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/pinnedItemsCard"
+        app:cardCornerRadius="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="#3C3C3C"
+        app:layout_constraintLeft_toRightOf="@id/typeVisView"
+        app:layout_constraintTop_toBottomOf="@id/hor_start_line"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" >
+
+    <ImageButton
+        android:id="@+id/pinnedItemsView"
+        android:src="@drawable/ic_pinned_items"
+        android:layout_marginHorizontal="10dp"
+        android:background="#3C3C3C"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/sortCardView"
         app:cardCornerRadius="15dp"
         android:layout_marginTop="10dp"

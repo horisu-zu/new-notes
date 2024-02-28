@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
+    android:background="@color/gray_color_item"
     tools:openDrawer="start"
     android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
     tools:context=".MainActivity">
@@ -22,9 +23,7 @@
             android:id="@+id/toolbar"
             android:elevation="4dp"
             android:background="#838383"
-            app:titleTextColor="#3C3C3C"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:popupTheme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+            app:titleTextColor="#3C3C3C"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -32,7 +31,6 @@
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
-        android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/nav_view"
@@ -40,7 +38,7 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu"
-        app:itemIconTint="@color/color3"
-        app:itemTextColor="@color/color3"/>
+        app:itemIconTint="#9A9A9A"
+        app:itemTextColor="#9A9A9A"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
