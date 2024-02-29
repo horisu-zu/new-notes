@@ -60,7 +60,7 @@ public interface MainDAO {
     @Query("UPDATE notes SET pin = :pin WHERE ID = :id")
     void pin(int id, boolean pin);
 
-    @Query("SELECT * FROM notes WHERE pin= :pin ORDER BY ID DESC")
+    @Query("SELECT * FROM notes WHERE pin= :pin AND isArchived=0 ORDER BY ID DESC")
     List<Notes> getAllNotesByPinStatus(boolean pin);
 
     @Query("SELECT * FROM notes WHERE isArchived=0 ORDER BY ID DESC")

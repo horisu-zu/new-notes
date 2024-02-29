@@ -140,8 +140,12 @@ public class FolderFragment extends Fragment{
     private final FolderClickListener folderClickListener = new FolderClickListener() {
         @Override
         public void onClick(Folder folder) {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new NotesFolderFragment(folder.getFolder_id(), folder.getTagTitle())).commit();
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new NotesFolderFragment(folder.getFolder_id(),
+                            folder.getTagTitle()))
+                    .addToBackStack(null)
+                    .commit();
         }
         @Override
         public void onLongClick(CardView cardView, Folder folder) {

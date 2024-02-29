@@ -72,6 +72,10 @@ public class NotesFolderFragment extends Fragment implements PopupMenu.OnMenuIte
         typeButton = view.findViewById(R.id.typeView);
         folderTitleView = view.findViewById(R.id.folderTitle);
 
+        sortButton.setBackgroundColor(0);
+        arrowSortButton.setBackgroundColor(0);
+        typeButton.setBackgroundColor(0);
+
         folderTitleView.setText(folderTitle);
 
         database = RoomDB.getInstance(getContext());

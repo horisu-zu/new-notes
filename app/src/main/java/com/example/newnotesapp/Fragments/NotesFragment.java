@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,9 +40,10 @@ import java.util.List;
 public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClickListener,
         FragmentMenu.MenuFragmentInteractionListener{
     RecyclerView recyclerView;
+    CardView pinnedViewCard;
     NotesListAdapter notesListAdapter;
     List<Notes> notesList = new ArrayList<>();
-    List<Notes> origignalNotesList;
+    List<Notes> pinnedNotes, notPinnedNotes;
     List<Folder> folders;
     RoomDB database;
     FloatingActionButton fab_add;
@@ -58,6 +61,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     private boolean isNetType = true;
     private boolean isPinnedButtonActive = false;
     private int item_id = 0;
+    private boolean isSearchByContain = true;
 
     @Nullable
     @Override
@@ -74,12 +78,13 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         arrowSortButton = view.findViewById(R.id.sortTypeButton);
         pinViewButton = view.findViewById(R.id.pinnedItemsView);
         typeButton = view.findViewById(R.id.typeView);
+        pinnedViewCard = view.findViewById(R.id.pinnedItemsCard);
 
         sortButton.setBackgroundColor(0);
         arrowSortButton.setBackgroundColor(0);
         typeButton.setBackgroundColor(0);
         pinViewButton.setBackgroundColor(0);
-
+        pinnedViewCard.setBackgroundResource(R.drawable.default_card_background);
 
         database = RoomDB.getInstance(getContext());
         notesList = database.mainDAO().getAll();
@@ -87,35 +92,35 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
         updateRecycler(notesList);
 
-        if(database.mainDAO().getFolder() == null) {
-            baseFolder = new Folder();
-            baseFolder.setTagTitle("Default Folder");
-            baseFolder.setFolder_id(1);
-            baseFolder.setItemCount(0);
-
-            database.mainDAO().insertFolder(baseFolder);
-        }
+        checkEmptyFolder();
 
         pinViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                notesList.clear();
+
                 if(!isPinnedButtonActive) {
-                    List<Notes> pinnedNotes, notPinnedNotes;
 
                     pinnedNotes = database.mainDAO().getAllNotesByPinStatus(true);
                     notPinnedNotes = database.mainDAO().getAllNotesByPinStatus(false);
 
-                    pinViewButton.setBackgroundColor(getResources().getColor(R.color.color3));
+                    pinnedViewCard.setBackgroundResource(R.drawable.active_pinned_card);
+                    //pinViewButton.setBackgroundColor(getResources().getColor(R.color.color3));
                     setUIEnabled(false);
 
                     pinnedNotes.addAll(notPinnedNotes);
-                    notesListAdapter.filterList(pinnedNotes);
+                    notesList.addAll(pinnedNotes);
+                    notesListAdapter.filterList(notesList);
+                    notesListAdapter.notifyDataSetChanged();
                 }
                 else if(isPinnedButtonActive) {
-                    pinViewButton.setBackgroundColor(0);
+                    pinnedViewCard.setBackgroundResource(R.drawable.default_card_background);
+                    //pinViewButton.setBackgroundColor(0);
 
                     setUIEnabled(true);
-                    notesListAdapter.filterList(database.mainDAO().getAll());
+                    notesList.addAll(database.mainDAO().getAll());
+                    notesListAdapter.filterList(notesList);
+                    notesListAdapter.notifyDataSetChanged();
                 }
 
                 isPinnedButtonActive = !isPinnedButtonActive;
@@ -148,7 +153,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         database.mainDAO().getAllSortedByDate() :
                         database.mainDAO().getAllSortedByName();
 
-                notesListAdapter.filterList(sortedNotes);
+                notesList.clear();
+                notesList.addAll(sortedNotes);
                 notesListAdapter.notifyDataSetChanged();
             }
         });
@@ -176,7 +182,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText);
+                setFilterSearch(newText);
                 return false;
             }
         });
@@ -184,19 +190,36 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         return view;
     }
 
-    private void filter(String newText) {
+    private void setFilterSearch(String first_string) {
         List<Notes> filteredList = new ArrayList<>();
 
-        for (Notes singleNote : notesList) {
-            if (singleNote.getTitle().toLowerCase().contains(newText.toLowerCase())
-                    || singleNote.getNotes().toLowerCase().contains(newText.toLowerCase())) {
-                filteredList.add(singleNote);
+        if (first_string.startsWith("#")) {
+            isSearchByContain = false;
+            String tagQuery = first_string.substring(1).toLowerCase();
+
+            for (Notes singleNote : notesList) {
+                if (singleNote.getTag().toLowerCase().contains(tagQuery)) {
+                    filteredList.add(singleNote);
+                }
+            }
+        } else {
+            isSearchByContain = true;
+            String searchString = first_string.toLowerCase();
+
+            for (Notes singleNote : notesList) {
+                String title = singleNote.getTitle().toLowerCase();
+                String notes = singleNote.getNotes().toLowerCase();
+
+                if (title.contains(searchString) || notes.contains(searchString)) {
+                    filteredList.add(singleNote);
+                }
             }
         }
 
         notesListAdapter.filterList(filteredList);
         notesListAdapter.notifyDataSetChanged();
     }
+
 
     private void updateRecycler(List<Notes> notesList) {
         recyclerView.setHasFixedSize(true);
@@ -263,42 +286,56 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
+        notesList.clear();
         int itemId = menuItem.getItemId();
         if (itemId == R.id.pin_view) {
             if (selectedNote.isPin()) {
                 database.mainDAO().pin(selectedNote.getID(), false);
                 Toast.makeText(getContext(), "Відкріплено", Toast.LENGTH_SHORT).show();
-            } else if(!selectedNote.isPin()) {
+            } else if (!selectedNote.isPin()) {
                 database.mainDAO().pin(selectedNote.getID(), true);
                 Toast.makeText(getContext(), "Закріплено",
                         Toast.LENGTH_SHORT).show();
             }
 
-            notesList.clear();
-            notesList.addAll(database.mainDAO().getAll());
+            if (isPinnedButtonActive) {
+                pinnedNotes = database.mainDAO().getAllNotesByPinStatus(true);
+                notPinnedNotes = database.mainDAO().getAllNotesByPinStatus(false);
+
+                pinnedNotes.addAll(notPinnedNotes);
+                notesList.addAll(pinnedNotes);
+            } else {
+                notesList.addAll(database.mainDAO().getAll());
+            }
+
             notesListAdapter.notifyDataSetChanged();
             return true;
-        }
-
-        else if(itemId == R.id.archive) {
-            if(selectedNote.isPin())
+        } else if (itemId == R.id.archive) {
+            if (selectedNote.isPin())
                 Toast.makeText(getContext(), "Неможливо архівувати закріплену замітку",
                         Toast.LENGTH_SHORT).show();
             else if (!selectedNote.isPin()) {
                 database.mainDAO().archive(selectedNote.getID(), true);
-
                 notesList.clear();
-                notesList.addAll(database.mainDAO().getAll());
+
+                if (isPinnedButtonActive) {
+                    pinnedNotes = database.mainDAO().getAllNotesByPinStatus(true);
+                    notPinnedNotes = database.mainDAO().getAllNotesByPinStatus(false);
+
+                    pinnedNotes.addAll(notPinnedNotes);
+                    notesList.addAll(pinnedNotes);
+                } else {
+                    notesList.addAll(database.mainDAO().getAll());
+                }
+
                 notesListAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), "Архівовано", Toast.LENGTH_SHORT).show();
             }
             return true;
-        }
-
-        else if(itemId == R.id.toFolder) {
+        } else if (itemId == R.id.toFolder) {
             DialogFragment addToFolderDialogFragment = new DialogFragment(folders, selectedNote,
                     database);
-            addToFolderDialogFragment.show(getFragmentManager(),"AddToFolderFragment");
+            addToFolderDialogFragment.show(getFragmentManager(), "AddToFolderFragment");
         }
         return false;
     }
@@ -326,7 +363,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                             : database.mainDAO().getAllSortedByNameReverse();
                 }
 
-                notesListAdapter.filterList(sortedNotes);
+                notesList.clear();
+                notesList.addAll(sortedNotes);
                 notesListAdapter.notifyDataSetChanged();
 
                 String textView = (itemId == R.id.menu_sort_by_date)
@@ -393,6 +431,17 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
         typePopupMenu.inflate(R.menu.type_popup);
         typePopupMenu.show();
+    }
+
+    private void checkEmptyFolder() {
+        if(database.mainDAO().getFolder() == null) {
+            baseFolder = new Folder();
+            baseFolder.setTagTitle("Default Folder");
+            baseFolder.setFolder_id(1);
+            baseFolder.setItemCount(0);
+
+            database.mainDAO().insertFolder(baseFolder);
+        }
     }
 
     @Override
