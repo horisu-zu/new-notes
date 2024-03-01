@@ -45,6 +45,7 @@ public class NotesFolderFragment extends Fragment implements PopupMenu.OnMenuIte
     }
 
     List<Notes> notesList;
+    List<Folder> folders;
     NotesListAdapter notesListAdapter;
     RecyclerView recyclerView;
     RoomDB database;
@@ -71,14 +72,15 @@ public class NotesFolderFragment extends Fragment implements PopupMenu.OnMenuIte
         arrowSortButton = view.findViewById(R.id.sortTypeButton);
         typeButton = view.findViewById(R.id.typeView);
         folderTitleView = view.findViewById(R.id.folderTitle);
+        database = RoomDB.getInstance(getContext());
 
         sortButton.setBackgroundColor(0);
         arrowSortButton.setBackgroundColor(0);
         typeButton.setBackgroundColor(0);
 
+        folders = database.mainDAO().getAllFolders();
         folderTitleView.setText(folderTitle);
 
-        database = RoomDB.getInstance(getContext());
         notesList = database.mainDAO().getAllByFolderId(folderId);
 
         updateRecycler(notesList);
@@ -232,6 +234,14 @@ public class NotesFolderFragment extends Fragment implements PopupMenu.OnMenuIte
                 notesList.addAll(database.mainDAO().getAllByFolderId(folderId));
                 notesListAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), "Архівовано", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+        else if (itemId == R.id.toFolder) {
+            DialogFragment addToFolderDialogFragment = new DialogFragment(folders, selectedNote,
+                    database);
+            if(getFragmentManager() != null) {
+                addToFolderDialogFragment.show(getFragmentManager(), "AddToFolderFragment");
             }
             return true;
         }

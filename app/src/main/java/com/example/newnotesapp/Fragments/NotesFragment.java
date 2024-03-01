@@ -190,12 +190,14 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         return view;
     }
 
-    private void setFilterSearch(String first_string) {
+    private void setFilterSearch(String query) {
         List<Notes> filteredList = new ArrayList<>();
 
-        if (first_string.startsWith("#")) {
+        if (query.isEmpty()) {
+            filteredList.addAll(notesList);
+        } else if (query.startsWith("#")) {
             isSearchByContain = false;
-            String tagQuery = first_string.substring(1).toLowerCase();
+            String tagQuery = query.substring(1).toLowerCase();
 
             for (Notes singleNote : notesList) {
                 if (singleNote.getTag().toLowerCase().contains(tagQuery)) {
@@ -204,7 +206,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             }
         } else {
             isSearchByContain = true;
-            String searchString = first_string.toLowerCase();
+            String searchString = query.toLowerCase();
 
             for (Notes singleNote : notesList) {
                 String title = singleNote.getTitle().toLowerCase();
@@ -219,6 +221,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         notesListAdapter.filterList(filteredList);
         notesListAdapter.notifyDataSetChanged();
     }
+
 
 
     private void updateRecycler(List<Notes> notesList) {
@@ -286,9 +289,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
-        notesList.clear();
         int itemId = menuItem.getItemId();
         if (itemId == R.id.pin_view) {
+            notesList.clear();
             if (selectedNote.isPin()) {
                 database.mainDAO().pin(selectedNote.getID(), false);
                 Toast.makeText(getContext(), "Відкріплено", Toast.LENGTH_SHORT).show();
@@ -304,13 +307,16 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 pinnedNotes.addAll(notPinnedNotes);
                 notesList.addAll(pinnedNotes);
+                notesListAdapter.filterList(notesList);
             } else {
                 notesList.addAll(database.mainDAO().getAll());
+                notesListAdapter.filterList(notesList);
             }
 
             notesListAdapter.notifyDataSetChanged();
             return true;
         } else if (itemId == R.id.archive) {
+            notesList.clear();
             if (selectedNote.isPin())
                 Toast.makeText(getContext(), "Неможливо архівувати закріплену замітку",
                         Toast.LENGTH_SHORT).show();
@@ -335,7 +341,10 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         } else if (itemId == R.id.toFolder) {
             DialogFragment addToFolderDialogFragment = new DialogFragment(folders, selectedNote,
                     database);
-            addToFolderDialogFragment.show(getFragmentManager(), "AddToFolderFragment");
+            if(getFragmentManager() != null) {
+                addToFolderDialogFragment.show(getFragmentManager(), "AddToFolderFragment");
+            }
+            return true;
         }
         return false;
     }
@@ -365,6 +374,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 notesList.clear();
                 notesList.addAll(sortedNotes);
+                notesListAdapter.filterList(notesList);
                 notesListAdapter.notifyDataSetChanged();
 
                 String textView = (itemId == R.id.menu_sort_by_date)

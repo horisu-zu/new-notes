@@ -18,7 +18,6 @@
 
     public class DialogFragment extends androidx.fragment.app.DialogFragment {
         private List<Folder> folderList;
-        private List<Notes> notesList = new ArrayList<>();
         private Notes selectedNote;
         private RoomDB database;
 
@@ -53,9 +52,6 @@
         private void addToFolder(Notes notes, Folder folder) {
 
             database.mainDAO().addToFolder(notes.getID(), folder.getFolder_id());
-
-            notesList.clear();
-            notesList.addAll(database.mainDAO().getAll());
 
             Toast.makeText(getContext(), "Добавлено в папку: " + folder.getTagTitle(),
                     Toast.LENGTH_SHORT).show();
