@@ -69,6 +69,10 @@ public class FolderFragment extends Fragment{
         typeButton = view.findViewById(R.id.typeView);
         floatingActionButton = view.findViewById(R.id.createButton);
 
+        sortButton.setBackgroundColor(0);
+        arrowSortButton.setBackgroundColor(0);
+        typeButton.setBackgroundColor(0);
+
         database = RoomDB.getInstance(getContext());
         folders = database.mainDAO().getAllFolders();
 

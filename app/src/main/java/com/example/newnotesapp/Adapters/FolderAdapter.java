@@ -86,7 +86,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderViewHolder> {
 class FolderViewHolder extends RecyclerView.ViewHolder {
     CardView folderItem;
     TextView folderTitleView;
-    TextView itemsCountFolderView, idView;
+    TextView itemsCountFolderView;
     public FolderViewHolder(@NonNull View itemView) {
         super(itemView);
         folderItem = itemView.findViewById(R.id.folderItem);

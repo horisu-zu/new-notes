@@ -65,6 +65,10 @@ public class ArchiveFragment extends Fragment implements PopupMenu.OnMenuItemCli
         arrowSortButton = view.findViewById(R.id.sortTypeButtonArchive);
         typeButton = view.findViewById(R.id.typeViewArchive);
 
+        sortButton.setBackgroundColor(0);
+        arrowSortButton.setBackgroundColor(0);
+        typeButton.setBackgroundColor(0);
+
         database = RoomDB.getInstance(getContext());
         notesList = database.mainDAO().getAllArchived();
 

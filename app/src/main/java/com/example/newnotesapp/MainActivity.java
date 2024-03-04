@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -60,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else if(item.getItemId() == R.id.nav_folder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new FolderFragment()).commit();
+        }
+
+        else if(item.getItemId() == R.id.nav_info) {
+            Intent intent = new Intent(this, VersionActivity.class);
+            startActivityForResult(intent, 2022);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

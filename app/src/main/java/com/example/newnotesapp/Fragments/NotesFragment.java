@@ -155,6 +155,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 notesList.clear();
                 notesList.addAll(sortedNotes);
+                notesListAdapter.filterList(notesList);
                 notesListAdapter.notifyDataSetChanged();
             }
         });
