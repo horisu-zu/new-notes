@@ -1,5 +1,6 @@
 package com.example.newnotesapp.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -64,9 +65,11 @@ public class Utils {
             out.write(file.getBytes());
             out.close();
 
-            Toast.makeText(VersionActivity.getInstance(), "Файл збережено!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(VersionActivity.getInstance(), "Файл збережено!",
+                    Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(VersionActivity.getInstance(), "Помилка: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(VersionActivity.getInstance(), "Помилка: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -118,9 +121,42 @@ public class Utils {
         return notes;
     }
 
+    public static void deleteNote(int position) {
+        List<VersionNote> notes = loadNotes();
 
+        if (position >= 0 && position < notes.size()) {
+            notes.remove(position);
+            saveNotes(notes);
+        } else {
+            Log.e("Utils", "Invalid position for deletion: " + position);
+        }
+    }
 
-    public static void saveNote(String title, String note, String date) {
+    private static void saveNotes(List<VersionNote> notes) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("version_notes", createNoteJSONObject(notes));
+            saveNotes(jsonObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void saveNotes() {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            List<VersionNote> versionNotesData = VersionActivity.getInstance().versionNoteList;
+
+            jsonObject.put("version_notes", createNoteJSONObject(versionNotesData));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        saveNotes(jsonObject.toString());
+    }
+
+    /*public static void saveNote(String title, String note, String date) {
         String result = readNotes();
 
         Log.e("version_notes", result);
@@ -152,19 +188,5 @@ public class Utils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void saveNotes() {
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            List<VersionNote> versionNotesData = VersionActivity.getInstance().versionNoteList;
-
-            jsonObject.put("version_notes", createNoteJSONObject(versionNotesData));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        saveNotes(jsonObject.toString());
-    }
+    }*/
 }

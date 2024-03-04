@@ -3,6 +3,8 @@ package com.example.newnotesapp.Adapters;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -10,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.AnimRes;
@@ -19,17 +22,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.newnotesapp.Models.VersionNote;
 import com.example.newnotesapp.R;
+import com.example.newnotesapp.VersionClickListener;
 
 import java.util.List;
 
 public class VersionAdapter extends RecyclerView.Adapter<VersionViewHolder> {
-
+    VersionClickListener onVersionClick;
     List<VersionNote> versionNotes;
     Context context;
 
-    public VersionAdapter(Context context, List<VersionNote> versionNotes) {
+    public VersionAdapter(Context context, List<VersionNote> versionNotes,
+                          VersionClickListener onVersionClick) {
         this.context = context;
         this.versionNotes = versionNotes;
+        this.onVersionClick = onVersionClick;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+        void onItemLongClick(int position);
     }
 
     @NonNull
@@ -73,6 +84,16 @@ public class VersionAdapter extends RecyclerView.Adapter<VersionViewHolder> {
                 setVisibilityNote(holder, versionNote.isNoteShown());
 
                 versionNote.setNoteShown(!versionNote.isNoteShown());
+            }
+        });
+
+        holder.versionItem.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                int position = holder.getPosition();
+                onVersionClick.onLongClick(versionNotes.get(position), holder.versionItem,
+                        position);
+                return true;
             }
         });
     }
