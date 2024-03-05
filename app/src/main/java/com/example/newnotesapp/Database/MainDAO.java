@@ -6,6 +6,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.newnotesapp.Models.Folder;
 import com.example.newnotesapp.Models.Notes;
@@ -34,8 +35,8 @@ public interface MainDAO {
     @Query("SELECT * FROM folder WHERE folder_id != 1 ORDER BY folder_id DESC")
     List<Folder> getAllFolders();
 
-    @Query("UPDATE notes SET title = :title, notes = :notes, tag = :tag WHERE ID = :id")
-    void update(int id, String title, String tag, String notes);
+    @Query("UPDATE notes SET title = :title, notes = :notes, tag = :tag, color = :color WHERE ID = :id")
+    void update(int id, String title, String tag, String notes, int color);
 
     @Query("UPDATE folder SET folder_title = :tagTitle, count = :itemsCount WHERE folder_id = :id")
     void updateFolder(long id, String tagTitle, int itemsCount);
@@ -47,6 +48,9 @@ public interface MainDAO {
 
     @Delete
     void deleteFolder(Folder folder);
+
+    @Query("UPDATE notes SET color = :color WHERE ID = :id")
+    void updateColor(int id, int color);
 
     @Query("UPDATE notes SET isArchived = :isArchived WHERE ID = :id")
     void archive(int id, boolean isArchived);

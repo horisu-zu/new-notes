@@ -10,7 +10,7 @@ import com.example.newnotesapp.Fragments.NotesFragment;
 import com.example.newnotesapp.Models.Folder;
 import com.example.newnotesapp.Models.Notes;
 
-@Database(entities = {Notes.class, Folder.class}, version = 1, exportSchema = false)
+@Database(entities = {Notes.class, Folder.class}, version = 2, exportSchema = false)
 public abstract class RoomDB extends RoomDatabase {
     private static RoomDB database;
     private static String DATABASE_NAME = "NoteApp";

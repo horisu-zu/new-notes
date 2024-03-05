@@ -26,8 +26,14 @@ public class Notes implements Serializable {
     @ColumnInfo (name = "date")
     String date = "";
 
+    @ColumnInfo (name = "color")
+    int color = 0;
+
     @ColumnInfo (name = "pin")
     boolean pin = false;
+
+    @ColumnInfo (name = "isColorSet")
+    boolean isColorSet = false;
 
     @ColumnInfo (name = "isArchived")
     boolean isArchived = false;
@@ -37,6 +43,22 @@ public class Notes implements Serializable {
 
     @ColumnInfo (name = "folder_id")
     int folder_id = 0;
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public boolean isColorSet() {
+        return isColorSet;
+    }
+
+    public void setColorSet(boolean colorSet) {
+        isColorSet = colorSet;
+    }
 
     public int getFolder_id() {
         return folder_id;

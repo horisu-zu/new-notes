@@ -1,7 +1,10 @@
 package com.example.newnotesapp.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -37,9 +40,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+
 public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClickListener,
         FragmentMenu.MenuFragmentInteractionListener{
     RecyclerView recyclerView;
+    CardView selectedItem;
     CardView pinnedViewCard;
     NotesListAdapter notesListAdapter;
     List<Notes> notesList = new ArrayList<>();
@@ -55,6 +61,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     TextView sortTextView;
     ImageButton arrowSortButton;
     ImageButton typeButton;
+    int selectedColor = Color.WHITE;
     private boolean arrowButtonInstance = false;
     private boolean isMenuVisible = false;
     private boolean isFunctionalityEnabled = true;
@@ -67,7 +74,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.notes_fragment, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -248,6 +254,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         @Override
         public void onLongClick(Notes notes, CardView cardView) {
             selectedNote = notes;
+            selectedItem = cardView;
 
             showPopup(cardView);
         }
@@ -272,7 +279,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             if(resultCode == Activity.RESULT_OK) {
                 Notes new_notes = (Notes) data.getSerializableExtra("note");
                 database.mainDAO().update(new_notes.getID(), new_notes.getTitle(),
-                        new_notes.getTag(), new_notes.getNotes());
+                        new_notes.getTag(), new_notes.getNotes(), new_notes.getColor());
                 notesList.clear();
                 notesList.addAll(database.mainDAO().getAll());
                 notesListAdapter.notifyDataSetChanged();
@@ -347,7 +354,34 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
             }
             return true;
         }
+        else if(itemId == R.id.colorSet) {
+            showColorPickerDialog();
+            notesList.clear();
+            notesList.addAll(database.mainDAO().getAll());
+            notesListAdapter.notifyDataSetChanged();
+            return true;
+        }
+
         return false;
+    }
+
+    private void showColorPickerDialog() {
+        AmbilWarnaDialog colorPickerDialog = new AmbilWarnaDialog(getContext(), selectedColor,
+                new AmbilWarnaDialog.OnAmbilWarnaListener() {
+                    @Override
+                    public void onOk(AmbilWarnaDialog dialog, int color) {
+                        selectedColor = color;
+                        database.mainDAO().updateColor(selectedNote.getID(), selectedColor);
+                        Toast.makeText(getContext(), "Обрано колір: #" + Integer.toHexString(selectedColor),
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancel(AmbilWarnaDialog dialog) {
+                    }
+                });
+
+        colorPickerDialog.show();
     }
 
     private void showSortPopupMenu(View view) {

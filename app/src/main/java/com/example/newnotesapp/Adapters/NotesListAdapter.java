@@ -35,7 +35,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder>{
         this.onClickListener = onClickListener;
     }
 
-    private int getRandomColor() {
+    /*private int getRandomColor() {
         List<Integer> colorCode = new ArrayList<>();
 
         colorCode.add(R.color.color1);
@@ -49,7 +49,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder>{
         int randomColor = random.nextInt(colorCode.size());
 
         return colorCode.get(randomColor);
-    }
+    }*/
 
     @NonNull
     @Override
@@ -62,6 +62,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
+        holder.notes_container.setCardBackgroundColor(notesList.get(position).getColor());
         holder.titleView.setText(notesList.get(position).getTitle());
         holder.notesView.setText(notesList.get(position).getNotes());
         holder.dateView.setText(notesList.get(position).getDate());
@@ -74,9 +75,9 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesViewHolder>{
             holder.pin_tag.setImageResource(0);
         }
 
-        int colorCode = getRandomColor();
+        /*int colorCode = getRandomColor();
         holder.notes_container.setCardBackgroundColor(holder.itemView.getResources()
-                .getColor(colorCode));
+                .getColor(colorCode));*/
 
         holder.notes_container.setOnClickListener(new View.OnClickListener() {
             @Override

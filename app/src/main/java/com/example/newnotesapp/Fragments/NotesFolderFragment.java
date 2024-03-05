@@ -188,7 +188,7 @@ public class NotesFolderFragment extends Fragment implements PopupMenu.OnMenuIte
             if(resultCode == Activity.RESULT_OK) {
                 Notes new_notes = (Notes) data.getSerializableExtra("note");
                 database.mainDAO().update(new_notes.getID(), new_notes.getTitle(),
-                        new_notes.getTag(), new_notes.getNotes());
+                        new_notes.getTag(), new_notes.getNotes(), new_notes.getColor());
                 notesList.clear();
                 notesList.addAll(database.mainDAO().getAllByFolderId(folderId));
                 notesListAdapter.notifyDataSetChanged();

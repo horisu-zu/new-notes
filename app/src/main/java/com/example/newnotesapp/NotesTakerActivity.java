@@ -1,6 +1,7 @@
 package com.example.newnotesapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,15 +11,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.newnotesapp.Database.RoomDB;
 import com.example.newnotesapp.Models.Notes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+
 public class NotesTakerActivity extends AppCompatActivity {
 
     EditText editTitle, editNote, editTag;
-    ImageView imageViewSave;
+    ImageView imageViewSave, imageViewColor;
     Notes notes;
     boolean isOldNote = false;
 
@@ -31,6 +35,7 @@ public class NotesTakerActivity extends AppCompatActivity {
         editTitle = findViewById(R.id.editText_title);
         editTag = findViewById(R.id.editText_tag);
         imageViewSave = findViewById(R.id.imageViewSave);
+        imageViewColor = findViewById(R.id.imageViewColor);
 
         notes = new Notes();
         try {
@@ -42,6 +47,12 @@ public class NotesTakerActivity extends AppCompatActivity {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+
+        imageViewColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
 
         imageViewSave.setOnClickListener(new View.OnClickListener() {
             @Override

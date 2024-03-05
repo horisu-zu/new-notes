@@ -56,6 +56,8 @@ public class VersionAdapter extends RecyclerView.Adapter<VersionViewHolder> {
         holder.versionDateView.setText(versionNotes.get(position).getVersionDate());
         holder.versionNoteView.setText(versionNotes.get(position).getVersionNote());
         holder.arrowType.setImageResource(R.drawable.ic_arrow_right);
+        holder.arrowType.setBackgroundColor(0);
+
         holder.versionNoteView.setVisibility(View.GONE);
 
         /*holder.versionItem.setOnClickListener(new View.OnClickListener() {
