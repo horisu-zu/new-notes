@@ -25,6 +25,7 @@ public class NotesTakerActivity extends AppCompatActivity {
     ImageView imageViewSave, imageViewColor;
     Notes notes;
     boolean isOldNote = false;
+    int color = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class NotesTakerActivity extends AppCompatActivity {
             editTitle.setText(notes.getTitle());
             editNote.setText(notes.getNotes());
             editTag.setText(notes.getTag());
+            color = notes.getColor();
             isOldNote = true;
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -51,6 +53,7 @@ public class NotesTakerActivity extends AppCompatActivity {
         imageViewColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showColorPickerDialog(color);
             }
         });
 
@@ -79,6 +82,7 @@ public class NotesTakerActivity extends AppCompatActivity {
                     notes.setNotes(note);
                     notes.setDate(format.format(date));
                     notes.setFolder_id(1);
+                    notes.setColor(color);
                     notes.setArchived(false);
 
                     Intent intent = new Intent();
@@ -89,4 +93,41 @@ public class NotesTakerActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showColorPickerDialog(int colorSet) {
+        AmbilWarnaDialog colorPickerDialog;
+        //if(note != null) {
+            colorPickerDialog = new AmbilWarnaDialog(this, colorSet,
+                    new AmbilWarnaDialog.OnAmbilWarnaListener() {
+                        @Override
+                        public void onOk(AmbilWarnaDialog dialog, int new_color) {
+                            color = new_color;
+
+                            Toast.makeText(NotesTakerActivity.this,
+                                    "Обрано колір: #" + Integer.toHexString(color),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onCancel(AmbilWarnaDialog dialog) {
+                        }
+                    });
+            colorPickerDialog.show();
+    }
+
+    /*private int setColorForNewNote() {
+        AmbilWarnaDialog colorPickerDialog = new AmbilWarnaDialog(this, 0,
+                new AmbilWarnaDialog.OnAmbilWarnaListener() {
+                    @Override
+                    public void onOk(AmbilWarnaDialog dialog, int new_color) {
+                        color = new_color;
+                    }
+
+                    @Override
+                    public void onCancel(AmbilWarnaDialog dialog) {
+                    }
+                });
+        colorPickerDialog.show();
+        return color;
+    }*/
 }

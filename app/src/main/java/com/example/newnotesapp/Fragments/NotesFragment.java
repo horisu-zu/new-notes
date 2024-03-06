@@ -68,7 +68,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     private boolean isNetType = true;
     private boolean isPinnedButtonActive = false;
     private int item_id = 0;
-    private boolean isSearchByContain = true;
+    private boolean isSortByName = false;
+    private boolean isArrowUp = false;
 
     @Nullable
     @Override
@@ -124,7 +125,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     //pinViewButton.setBackgroundColor(0);
 
                     setUIEnabled(true);
-                    notesList.addAll(database.mainDAO().getAll());
+                    notesList.addAll(getNotesByStatus());
                     notesListAdapter.filterList(notesList);
                     notesListAdapter.notifyDataSetChanged();
                 }
@@ -158,6 +159,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         : (item_id == R.id.menu_sort_by_date) ?
                         database.mainDAO().getAllSortedByDate() :
                         database.mainDAO().getAllSortedByName();
+
+                isArrowUp = arrowButtonInstance;
 
                 notesList.clear();
                 notesList.addAll(sortedNotes);
@@ -203,7 +206,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         if (query.isEmpty()) {
             filteredList.addAll(notesList);
         } else if (query.startsWith("#")) {
-            isSearchByContain = false;
             String tagQuery = query.substring(1).toLowerCase();
 
             for (Notes singleNote : notesList) {
@@ -212,7 +214,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 }
             }
         } else {
-            isSearchByContain = true;
             String searchString = query.toLowerCase();
 
             for (Notes singleNote : notesList) {
@@ -270,7 +271,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 database.mainDAO().insert(n_notes);
                 notesList.clear();
-                notesList.addAll(database.mainDAO().getAll());
+                notesList.addAll(getNotesByStatus());
                 notesListAdapter.notifyDataSetChanged();
             }
         }
@@ -281,7 +282,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 database.mainDAO().update(new_notes.getID(), new_notes.getTitle(),
                         new_notes.getTag(), new_notes.getNotes(), new_notes.getColor());
                 notesList.clear();
-                notesList.addAll(database.mainDAO().getAll());
+                notesList.addAll(getNotesByStatus());
                 notesListAdapter.notifyDataSetChanged();
             }
         }
@@ -317,14 +318,12 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 notesList.addAll(pinnedNotes);
                 notesListAdapter.filterList(notesList);
             } else {
-                notesList.addAll(database.mainDAO().getAll());
+                notesList.addAll(getNotesByStatus());
                 notesListAdapter.filterList(notesList);
             }
 
-            notesListAdapter.notifyDataSetChanged();
             return true;
         } else if (itemId == R.id.archive) {
-            notesList.clear();
             if (selectedNote.isPin())
                 Toast.makeText(getContext(), "Неможливо архівувати закріплену замітку",
                         Toast.LENGTH_SHORT).show();
@@ -339,10 +338,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     pinnedNotes.addAll(notPinnedNotes);
                     notesList.addAll(pinnedNotes);
                 } else {
-                    notesList.addAll(database.mainDAO().getAll());
+                    notesList.addAll(getNotesByStatus());
                 }
 
-                notesListAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), "Архівовано", Toast.LENGTH_SHORT).show();
             }
             return true;
@@ -356,9 +354,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
         }
         else if(itemId == R.id.colorSet) {
             showColorPickerDialog();
-            notesList.clear();
-            notesList.addAll(database.mainDAO().getAll());
-            notesListAdapter.notifyDataSetChanged();
             return true;
         }
 
@@ -372,8 +367,11 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     public void onOk(AmbilWarnaDialog dialog, int color) {
                         selectedColor = color;
                         database.mainDAO().updateColor(selectedNote.getID(), selectedColor);
-                        Toast.makeText(getContext(), "Обрано колір: #" + Integer.toHexString(selectedColor),
-                                Toast.LENGTH_SHORT).show();
+                        notesList.clear();
+                        notesList.addAll(getNotesByStatus());
+                        notesListAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Обрано колір: #" +
+                                        Integer.toHexString(selectedColor), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -399,12 +397,17 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     sortedNotes = (itemId == R.id.menu_sort_by_date)
                             ? database.mainDAO().getAllSortedByDate()
                             : database.mainDAO().getAllSortedByName();
+                    isSortByName = itemId != R.id.menu_sort_by_date;
+                    /*isSortByName = (itemId == R.id.menu_sort_by_date)
+                            ? false
+                            : true;*/
                 }
 
                 else if(arrowButtonInstance) {
                     sortedNotes = (itemId == R.id.menu_sort_by_date)
                             ? database.mainDAO().getAllSortedByDateReverse()
                             : database.mainDAO().getAllSortedByNameReverse();
+                    isSortByName = itemId != R.id.menu_sort_by_date;
                 }
 
                 notesList.clear();
@@ -487,6 +490,28 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
             database.mainDAO().insertFolder(baseFolder);
         }
+    }
+
+    private List<Notes> getNotesByStatus() {
+        notesList.clear();
+
+        if(isSortByName) {
+            if(isArrowUp) {
+                notesList.addAll(database.mainDAO().getAllSortedByNameReverse());
+            }
+            else
+                notesList.addAll(database.mainDAO().getAllSortedByName());
+        } else{
+            if(isArrowUp) {
+                notesList.addAll(database.mainDAO().getAllSortedByDateReverse());
+            }
+            else
+                notesList.addAll(database.mainDAO().getAllSortedByDate());
+        }
+
+        //notesListAdapter.notifyDataSetChanged();
+
+        return notesList;
     }
 
     @Override

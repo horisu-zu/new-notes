@@ -22,14 +22,6 @@
             android:layout_gravity="end"
             android:layout_margin="15dp"
             android:src="@drawable/ic_save" />
-
-        <ImageView
-            android:id="@+id/imageViewColor"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="start"
-            android:layout_margin="15dp"
-            android:src="@drawable/ic_brush"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
     <EditText
