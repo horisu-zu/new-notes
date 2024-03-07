@@ -270,7 +270,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 Notes n_notes = (Notes) data.getSerializableExtra("note");
 
                 database.mainDAO().insert(n_notes);
-                notesList.clear();
                 notesList.addAll(getNotesByStatus());
                 notesListAdapter.notifyDataSetChanged();
             }
@@ -281,7 +280,6 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 Notes new_notes = (Notes) data.getSerializableExtra("note");
                 database.mainDAO().update(new_notes.getID(), new_notes.getTitle(),
                         new_notes.getTag(), new_notes.getNotes(), new_notes.getColor());
-                notesList.clear();
                 notesList.addAll(getNotesByStatus());
                 notesListAdapter.notifyDataSetChanged();
             }
@@ -316,10 +314,9 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 pinnedNotes.addAll(notPinnedNotes);
                 notesList.addAll(pinnedNotes);
-                notesListAdapter.filterList(notesList);
             } else {
                 notesList.addAll(getNotesByStatus());
-                notesListAdapter.filterList(notesList);
+                notesListAdapter.notifyDataSetChanged();
             }
 
             return true;
@@ -339,6 +336,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
                     notesList.addAll(pinnedNotes);
                 } else {
                     notesList.addAll(getNotesByStatus());
+                    notesListAdapter.notifyDataSetChanged();
                 }
 
                 Toast.makeText(getContext(), "Архівовано", Toast.LENGTH_SHORT).show();
@@ -361,13 +359,12 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     }
 
     private void showColorPickerDialog() {
-        AmbilWarnaDialog colorPickerDialog = new AmbilWarnaDialog(getContext(), selectedColor,
-                new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        AmbilWarnaDialog colorPickerDialog = new AmbilWarnaDialog(getContext(),
+                selectedNote.getColor(), new AmbilWarnaDialog.OnAmbilWarnaListener() {
                     @Override
                     public void onOk(AmbilWarnaDialog dialog, int color) {
                         selectedColor = color;
                         database.mainDAO().updateColor(selectedNote.getID(), selectedColor);
-                        notesList.clear();
                         notesList.addAll(getNotesByStatus());
                         notesListAdapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "Обрано колір: #" +
@@ -493,25 +490,26 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
     }
 
     private List<Notes> getNotesByStatus() {
+        List<Notes> sortedNotes = new ArrayList<>();
         notesList.clear();
 
         if(isSortByName) {
             if(isArrowUp) {
-                notesList.addAll(database.mainDAO().getAllSortedByNameReverse());
+                sortedNotes.addAll(database.mainDAO().getAllSortedByNameReverse());
             }
             else
-                notesList.addAll(database.mainDAO().getAllSortedByName());
+                sortedNotes.addAll(database.mainDAO().getAllSortedByName());
         } else{
             if(isArrowUp) {
-                notesList.addAll(database.mainDAO().getAllSortedByDateReverse());
+                sortedNotes.addAll(database.mainDAO().getAllSortedByDateReverse());
             }
             else
-                notesList.addAll(database.mainDAO().getAllSortedByDate());
+                sortedNotes.addAll(database.mainDAO().getAllSortedByDate());
         }
 
         //notesListAdapter.notifyDataSetChanged();
 
-        return notesList;
+        return sortedNotes;
     }
 
     @Override

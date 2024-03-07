@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +26,7 @@ public class NotesTakerActivity extends AppCompatActivity {
     ImageView imageViewSave, imageViewColor;
     Notes notes;
     boolean isOldNote = false;
-    int color = 0;
+    int color = R.color.white;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,20 +115,4 @@ public class NotesTakerActivity extends AppCompatActivity {
                     });
             colorPickerDialog.show();
     }
-
-    /*private int setColorForNewNote() {
-        AmbilWarnaDialog colorPickerDialog = new AmbilWarnaDialog(this, 0,
-                new AmbilWarnaDialog.OnAmbilWarnaListener() {
-                    @Override
-                    public void onOk(AmbilWarnaDialog dialog, int new_color) {
-                        color = new_color;
-                    }
-
-                    @Override
-                    public void onCancel(AmbilWarnaDialog dialog) {
-                    }
-                });
-        colorPickerDialog.show();
-        return color;
-    }*/
 }
