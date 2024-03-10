@@ -99,6 +99,8 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
         updateRecycler(notesList);
 
+        notesList.addAll(getNotesByStatus());
+
         checkEmptyFolder();
 
         pinViewButton.setOnClickListener(new View.OnClickListener() {
@@ -314,6 +316,7 @@ public class NotesFragment extends Fragment implements PopupMenu.OnMenuItemClick
 
                 pinnedNotes.addAll(notPinnedNotes);
                 notesList.addAll(pinnedNotes);
+                notesListAdapter.notifyDataSetChanged();
             } else {
                 notesList.addAll(getNotesByStatus());
                 notesListAdapter.notifyDataSetChanged();

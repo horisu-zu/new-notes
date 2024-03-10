@@ -31,6 +31,8 @@ public class Utils {
         StringBuilder result = new StringBuilder();
         File notesFile = new File(VersionActivity.getInstance().getFilesDir()
                 .getAbsolutePath(), "version_notes.json");
+        Log.e("File path: ", VersionActivity.getInstance().getFilesDir()
+                .getAbsolutePath());
 
         if (!notesFile.exists()) {
             try {
